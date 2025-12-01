@@ -1,0 +1,5 @@
+{
+  "name": "NetClone AI",
+  "description": "A responsive Netflix clone featuring AI-powered movie recommendations using Google Gemini.",
+  "requestFramePermissions": []
+}
