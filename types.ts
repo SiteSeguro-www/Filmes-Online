@@ -16,7 +16,7 @@ export interface ChatMessage {
 
 export enum Genre {
   Trending = 'Trending Now',
-  Originals = 'NetClone Originals',
+  Originals = 'Netfly Originals',
   Action = 'Action Thrillers',
   Comedy = 'Comedies',
   SciFi = 'Sci-Fi & Fantasy'

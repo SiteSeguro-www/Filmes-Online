@@ -63,7 +63,7 @@ function App() {
            </ul>
         </div>
         <div className="max-w-4xl mx-auto mt-4 text-xs">
-          © 2024 NetClone AI Simulation.
+          © 2024 Netfly AI Simulation.
         </div>
       </footer>
     </div>

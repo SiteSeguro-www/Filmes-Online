@@ -3,9 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NetClone AI</title>
-    <meta name="description" content="A responsive Netflix clone featuring AI-powered movie recommendations using Google Gemini.">
+    <title>Netfly AI</title>
+    <meta name="description" content="A responsive Netfly clone featuring AI-powered movie recommendations using Google Gemini.">
     
+    <!-- Monetag Verification -->
+    <meta name="monetag" content="2328a1e7e08c491c3839d61ecbf952c8">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,6 +33,19 @@
     
     <!-- Babel standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Service Worker Registration for Monetag -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
 
     <!-- Import Map for GenAI -->
     <script type="importmap">
@@ -77,7 +93,7 @@
       // --- CONSTANTS & TYPES ---
       const Genre = {
         Trending: 'Trending Now',
-        Originals: 'NetClone Originals',
+        Originals: 'Netfly Originals',
         Action: 'Action Thrillers',
         Comedy: 'Comedies',
         SciFi: 'Sci-Fi & Fantasy'
@@ -186,7 +202,7 @@
         try {
           const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: `You are a helpful movie recommendation assistant for a streaming service called NetClone. 
+            contents: `You are a helpful movie recommendation assistant for a streaming service called Netfly. 
             The user asks: "${userQuery}".
             
             Recommend 3 fictional movies (invent creative titles and brief descriptions) that fit the user's mood or request. 
@@ -224,7 +240,7 @@
           <nav className={`fixed top-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-netflix-dark' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
             <div className="flex items-center justify-between px-4 py-4 md:px-12">
               <div className="flex items-center space-x-8">
-                <h1 className="text-netflix-red text-2xl md:text-4xl font-bold cursor-pointer tracking-tighter">NETCLONE</h1>
+                <h1 className="text-netflix-red text-2xl md:text-4xl font-bold cursor-pointer tracking-tighter">NETFLY</h1>
                 <ul className="hidden md:flex space-x-6 text-sm text-gray-300">
                   <li className="cursor-pointer hover:text-white transition font-medium">Início</li>
                   <li className="cursor-pointer hover:text-white transition">Séries</li>
@@ -243,7 +259,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                   </svg>
-                  <span className="hidden sm:inline font-medium">NetClone AI</span>
+                  <span className="hidden sm:inline font-medium">Netfly AI</span>
                 </button>
                 
                 <div className="flex items-center gap-2 cursor-pointer">
@@ -438,7 +454,7 @@
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                     </svg>
                   </div>
-                  <h3 className="font-bold text-lg">NetClone Assistente</h3>
+                  <h3 className="font-bold text-lg">Netfly Assistente</h3>
                 </div>
                 <button onClick={onClose} className="text-gray-400 hover:text-white transition">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -571,7 +587,7 @@
                  </ul>
               </div>
               <div className="max-w-4xl mx-auto mt-4 text-xs">
-                © 2024 NetClone AI Simulation.
+                © 2024 Netfly AI Simulation.
               </div>
             </footer>
           </div>

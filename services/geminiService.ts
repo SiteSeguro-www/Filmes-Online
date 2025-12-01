@@ -15,7 +15,7 @@ export const getMovieRecommendations = async (userQuery: string): Promise<string
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: `You are a helpful movie recommendation assistant for a streaming service called NetClone. 
+      contents: `You are a helpful movie recommendation assistant for a streaming service called Netfly. 
       The user asks: "${userQuery}".
       
       Recommend 3 fictional movies (invent creative titles and brief descriptions) that fit the user's mood or request. 
