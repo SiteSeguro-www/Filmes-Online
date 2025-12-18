@@ -9,8 +9,8 @@
     <!-- Monetag Verification -->
     <meta name="monetag" content="2328a1e7e08c491c3839d61ecbf952c8">
 
-    <!-- Monetag Notification/Vignette Ad Script -->
-    <script src="https://3nbf4.com/act/files/tag.min.js?z=10264458" data-cfasync="false" async></script>
+    <!-- Monetag MultiTag Ad Script (Zone 194149) -->
+    <script src="https://quge5.com/88/tag.min.js" data-zone="194149" async data-cfasync="false"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,7 +37,7 @@
     <!-- Babel standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Service Worker Registration for Monetag -->
+    <!-- Service Worker Registration for Monetag (Push Notifications) -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -88,9 +88,6 @@
       const { useState, useEffect, useRef } = React;
 
       // --- CONFIGURATION ---
-      // NOTE: For a static site on GitHub Pages without a backend/build, 
-      // API Keys cannot be securely injected via process.env.
-      // We will allow the user to input it in the UI if not set here.
       const API_KEY = ""; 
 
       // --- CONSTANTS & TYPES ---
@@ -189,409 +186,154 @@
 
       const ALL_MOVIES = [...MOCK_MOVIES, ...MOCK_MOVIES.map(m => ({...m, id: m.id + 100}))];
 
-      // --- SERVICES ---
       const getAiClient = (key) => {
-        if (!key) {
-          console.warn("API_KEY is missing.");
-          return null;
-        }
+        if (!key) return null;
         return new GoogleGenAI({ apiKey: key });
       };
 
       const getMovieRecommendations = async (userQuery, key) => {
         const ai = getAiClient(key);
         if (!ai) return "Por favor, configure sua chave de API para usar o assistente de IA.";
-
         try {
           const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3-flash-preview',
             contents: `You are a helpful movie recommendation assistant for a streaming service called Netfly. 
             The user asks: "${userQuery}".
-            
-            Recommend 3 fictional movies (invent creative titles and brief descriptions) that fit the user's mood or request. 
-            Format the output as a simple list. Keep it short and engaging. 
-            Answer in Portuguese.`,
+            Recommend 3 fictional movies that fit the request. Portuguese language.`,
           });
-
-          return response.text || "Desculpe, não consegui gerar recomendações no momento.";
+          return response.text;
         } catch (error) {
-          console.error("Gemini API Error:", error);
-          return "Ocorreu um erro ao conectar com o assistente inteligente.";
+          return "Erro ao conectar com o assistente.";
         }
       };
 
-      // --- COMPONENTS ---
-
-      // Navbar
       const Navbar = ({ onOpenSearch }) => {
         const [isScrolled, setIsScrolled] = useState(false);
-
         useEffect(() => {
-          const handleScroll = () => {
-            if (window.scrollY > 0) {
-              setIsScrolled(true);
-            } else {
-              setIsScrolled(false);
-            }
-          };
-
+          const handleScroll = () => setIsScrolled(window.scrollY > 0);
           window.addEventListener('scroll', handleScroll);
           return () => window.removeEventListener('scroll', handleScroll);
         }, []);
-
         return (
           <nav className={`fixed top-0 w-full z-50 transition-colors duration-300 ${isScrolled ? 'bg-netflix-dark' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
             <div className="flex items-center justify-between px-4 py-4 md:px-12">
               <div className="flex items-center space-x-8">
                 <h1 className="text-netflix-red text-2xl md:text-4xl font-bold cursor-pointer tracking-tighter">NETFLY</h1>
-                <ul className="hidden md:flex space-x-6 text-sm text-gray-300">
-                  <li className="cursor-pointer hover:text-white transition font-medium">Início</li>
-                  <li className="cursor-pointer hover:text-white transition">Séries</li>
-                  <li className="cursor-pointer hover:text-white transition">Filmes</li>
-                  <li className="cursor-pointer hover:text-white transition">Bombando</li>
-                  <li className="cursor-pointer hover:text-white transition">Minha Lista</li>
-                </ul>
               </div>
-
               <div className="flex items-center space-x-6 text-white">
-                <button 
-                  onClick={onOpenSearch}
-                  className="flex items-center gap-2 hover:text-gray-300 transition"
-                  title="Ask AI"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                  </svg>
-                  <span className="hidden sm:inline font-medium">Netfly AI</span>
+                <button onClick={onOpenSearch} className="flex items-center gap-2 hover:text-gray-300 transition">
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                   <span className="hidden sm:inline font-medium">Netfly AI</span>
                 </button>
-                
-                <div className="flex items-center gap-2 cursor-pointer">
-                  <img 
-                    src="https://picsum.photos/id/64/100/100" 
-                    alt="User" 
-                    className="w-8 h-8 rounded" 
-                  />
-                </div>
               </div>
             </div>
           </nav>
         );
       };
 
-      // Hero
-      const Hero = ({ movie }) => {
-        return (
-          <div className="relative h-[56.25vw] max-h-[85vh] w-full text-white">
-            {/* Background Image */}
-            <div className="absolute top-0 left-0 w-full h-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-netflix-dark via-transparent to-transparent z-10" />
-              <div className="absolute inset-0 bg-gradient-to-t from-netflix-dark via-transparent to-transparent z-10" />
-              <img 
-                src={movie.backdropUrl} 
-                alt={movie.title} 
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="absolute top-[30%] md:top-[40%] left-4 md:left-12 z-20 max-w-xl">
-              <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg mb-4">
-                {movie.title}
-              </h1>
-              <p className="text-lg text-green-400 font-semibold mb-2">{movie.match}% Relevante</p>
-              <p className="text-shadow-md text-sm md:text-lg mb-6 line-clamp-3 md:line-clamp-none text-gray-100">
-                {movie.description}
-              </p>
-              
-              <div className="flex space-x-3">
-                <button className="flex items-center gap-2 bg-white text-black px-6 md:px-8 py-2 md:py-3 rounded font-bold hover:bg-opacity-80 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
-                  </svg>
-                  Assistir
-                </button>
-                <button className="flex items-center gap-2 bg-gray-500/70 text-white px-6 md:px-8 py-2 md:py-3 rounded font-bold hover:bg-gray-500/50 transition backdrop-blur-sm">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                  </svg>
-                  Mais informações
-                </button>
-              </div>
+      const Hero = ({ movie }) => (
+        <div className="relative h-[56.25vw] max-h-[85vh] w-full text-white">
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-netflix-dark via-transparent to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-netflix-dark via-transparent to-transparent z-10" />
+            <img src={movie.backdropUrl} alt={movie.title} className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute top-[30%] md:top-[40%] left-4 md:left-12 z-20 max-w-xl">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">{movie.title}</h1>
+            <p className="text-lg text-green-400 font-semibold mb-2">{movie.match}% Relevante</p>
+            <p className="text-sm md:text-lg mb-6 line-clamp-3 text-gray-100">{movie.description}</p>
+            <div className="flex space-x-3">
+              <button className="bg-white text-black px-6 md:px-8 py-2 md:py-3 rounded font-bold hover:bg-opacity-80">Assistir</button>
+              <button className="bg-gray-500/70 text-white px-6 md:px-8 py-2 md:py-3 rounded font-bold">Mais informações</button>
             </div>
           </div>
-        );
-      };
+        </div>
+      );
 
-      // Row
       const Row = ({ title, movies }) => {
         const rowRef = useRef(null);
-
-        const scroll = (direction) => {
+        const scroll = (dir) => {
           if (rowRef.current) {
-            const { current } = rowRef;
-            const scrollAmount = window.innerWidth / 2 > 600 ? window.innerWidth / 2 : 300;
-            
-            if (direction === 'left') {
-              current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-              current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            }
+            const amount = window.innerWidth / 2;
+            rowRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
           }
         };
-
         return (
           <div className="mb-8 px-4 md:px-12 group relative">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-100 mb-4 transition-colors hover:text-white cursor-pointer inline-block">
-              {title}
-            </h2>
-            
+            <h2 className="text-xl md:text-2xl font-bold text-gray-100 mb-4">{title}</h2>
             <div className="relative group/row">
-              {/* Left Arrow */}
-              <button 
-                onClick={() => scroll('left')}
-                className="absolute left-0 top-0 bottom-0 z-40 bg-black/50 hover:bg-black/70 w-12 hidden group-hover/row:flex items-center justify-center transition-all opacity-0 group-hover/row:opacity-100 h-full"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-              </button>
-
-              {/* Scroll Container */}
-              <div 
-                ref={rowRef}
-                className="flex space-x-4 overflow-x-scroll no-scrollbar scroll-smooth py-4"
-              >
+              <button onClick={() => scroll('left')} className="absolute left-0 top-0 bottom-0 z-40 bg-black/50 w-12 hidden group-hover/row:flex items-center justify-center h-full opacity-0 group-hover/row:opacity-100 transition-all"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+              <div ref={rowRef} className="flex space-x-4 overflow-x-scroll no-scrollbar scroll-smooth py-4">
                 {movies.map((movie) => (
-                  <div 
-                    key={`${title}-${movie.id}`}
-                    className="flex-none w-[160px] md:w-[240px] relative cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-30 rounded-md overflow-hidden shadow-lg group/card"
-                  >
-                    <img 
-                      src={movie.imageUrl} 
-                      alt={movie.title} 
-                      className="w-full h-[240px] md:h-[360px] object-cover rounded-md"
-                    />
+                  <div key={movie.id} className="flex-none w-[160px] md:w-[240px] relative cursor-pointer transition-transform hover:scale-110 hover:z-30 rounded-md overflow-hidden shadow-lg group/card">
+                    <img src={movie.imageUrl} alt={movie.title} className="w-full h-[240px] md:h-[360px] object-cover rounded-md" />
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity flex flex-col justify-end p-2">
                        <h3 className="text-sm font-bold">{movie.title}</h3>
-                       <div className="flex items-center gap-2 text-xs text-green-400 mt-1">
-                          <span>{movie.match}% Match</span>
-                          <span className="text-gray-300 border border-gray-500 px-1 rounded">HD</span>
-                       </div>
-                       <div className="flex gap-2 mt-1 text-xs text-gray-300">
-                          <span>Action</span>
-                          <span>&bull;</span>
-                          <span>Sci-Fi</span>
-                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-
-              {/* Right Arrow */}
-              <button 
-                onClick={() => scroll('right')}
-                className="absolute right-0 top-0 bottom-0 z-40 bg-black/50 hover:bg-black/70 w-12 hidden group-hover/row:flex items-center justify-center transition-all opacity-0 group-hover/row:opacity-100 h-full"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-              </button>
+              <button onClick={() => scroll('right')} className="absolute right-0 top-0 bottom-0 z-40 bg-black/50 w-12 hidden group-hover/row:flex items-center justify-center h-full opacity-0 group-hover/row:opacity-100 transition-all"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-white"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
             </div>
           </div>
         );
       };
 
-      // AIChatModal
       const AIChatModal = ({ isOpen, onClose }) => {
         const [query, setQuery] = useState('');
-        const [apiKeyInput, setApiKeyInput] = useState('');
-        const [currentKey, setCurrentKey] = useState(API_KEY);
-        const [messages, setMessages] = useState([
-          { role: 'model', text: 'Olá! Não sabe o que assistir? Me diga seu humor ou filmes que você gosta e eu te dou algumas sugestões.' }
-        ]);
+        const [messages, setMessages] = useState([{ role: 'model', text: 'Olá! Não sabe o que assistir?' }]);
         const [isLoading, setIsLoading] = useState(false);
-        const messagesEndRef = useRef(null);
-
-        const scrollToBottom = () => {
-          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        };
-
-        useEffect(() => {
-          scrollToBottom();
-        }, [messages, isOpen]);
-
+        const ref = useRef(null);
+        useEffect(() => ref.current?.scrollIntoView({ behavior: 'smooth' }), [messages]);
         const handleSubmit = async (e) => {
           e.preventDefault();
           if (!query.trim()) return;
-
-          const userMsg = query;
-          setQuery('');
-          setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
+          const q = query; setQuery('');
+          setMessages(p => [...p, { role: 'user', text: q }]);
           setIsLoading(true);
-
-          // Use the key from input if provided, else fallback to const
-          const keyToUse = apiKeyInput || currentKey;
-
-          if (!keyToUse) {
-            setMessages(prev => [...prev, { role: 'model', text: 'Preciso de uma chave de API do Google Gemini para funcionar. Por favor, insira abaixo.' }]);
-            setIsLoading(false);
-            return;
-          }
-
-          const response = await getMovieRecommendations(userMsg, keyToUse);
-
-          setMessages(prev => [...prev, { role: 'model', text: response }]);
+          const res = await getMovieRecommendations(q, API_KEY);
+          setMessages(p => [...p, { role: 'model', text: res }]);
           setIsLoading(false);
         };
-
         if (!isOpen) return null;
-
         return (
           <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="bg-[#181818] w-full max-w-2xl rounded-lg shadow-2xl overflow-hidden border border-gray-700 flex flex-col h-[600px]">
-              {/* Header */}
               <div className="flex justify-between items-center p-4 border-b border-gray-700 bg-[#141414]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                    </svg>
-                  </div>
-                  <h3 className="font-bold text-lg">Netfly Assistente</h3>
-                </div>
-                <button onClick={onClose} className="text-gray-400 hover:text-white transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <h3 className="font-bold text-lg">Netfly Assistente AI</h3>
+                <button onClick={onClose}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
               </div>
-
-              {/* Chat Area */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#141414]">
-                {messages.map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div 
-                      className={`max-w-[80%] p-3 rounded-lg text-sm md:text-base whitespace-pre-wrap ${
-                        msg.role === 'user' 
-                          ? 'bg-red-700 text-white rounded-br-none' 
-                          : 'bg-[#2F2F2F] text-gray-100 rounded-bl-none'
-                      }`}
-                    >
-                      {msg.text}
-                    </div>
+                {messages.map((m, i) => (
+                  <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] p-3 rounded-lg text-sm ${m.role === 'user' ? 'bg-red-700' : 'bg-[#2F2F2F]'}`}>{m.text}</div>
                   </div>
                 ))}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-[#2F2F2F] p-3 rounded-lg rounded-bl-none flex gap-1">
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></span>
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></span>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
+                <div ref={ref} />
               </div>
-
-              {/* Input */}
-              <div className="p-4 bg-[#141414] border-t border-gray-700 flex flex-col gap-2">
-                {!currentKey && !apiKeyInput && (
-                   <div className="text-xs text-yellow-500 mb-1">
-                     ⚠️ Configuração: Para testar a IA, edite o arquivo ou digite sua API Key abaixo.
-                   </div>
-                )}
-                {!currentKey && (
-                  <input 
-                    type="password"
-                    placeholder="Cole sua Gemini API Key aqui (não será salva)"
-                    value={apiKeyInput}
-                    onChange={(e) => setApiKeyInput(e.target.value)}
-                    className="bg-[#222] text-xs text-gray-300 px-2 py-1 rounded border border-gray-600 mb-2 focus:outline-none"
-                  />
-                )}
-                
-                <form onSubmit={handleSubmit} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Ex: Quero um filme de ficção com plot twist..."
-                    className="flex-1 bg-[#2F2F2F] text-white rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-600"
-                  />
-                  <button 
-                    type="submit" 
-                    disabled={isLoading || !query.trim()}
-                    className="bg-red-600 text-white px-6 py-2 rounded font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  >
-                    Enviar
-                  </button>
-                </form>
-              </div>
+              <form onSubmit={handleSubmit} className="p-4 bg-[#141414] border-t border-gray-700 flex gap-2">
+                <input type="text" value={query} onChange={e => setQuery(e.target.value)} placeholder="O que vamos assistir hoje?" className="flex-1 bg-[#2F2F2F] text-white rounded px-4 py-2" />
+                <button type="submit" disabled={isLoading} className="bg-red-600 px-6 py-2 rounded font-bold">Enviar</button>
+              </form>
             </div>
           </div>
         );
       };
 
-      // App
       const App = () => {
         const [isAiModalOpen, setIsAiModalOpen] = useState(false);
-
-        // Filter movies by genre
-        const originals = ALL_MOVIES.filter(m => m.genre === Genre.Originals);
-        const trending = ALL_MOVIES.filter(m => m.genre === Genre.Trending);
-        const action = ALL_MOVIES.filter(m => m.genre === Genre.Action);
-        const comedy = ALL_MOVIES.filter(m => m.genre === Genre.Comedy);
-        const scifi = ALL_MOVIES.filter(m => m.genre === Genre.SciFi);
-
-        // Select a random movie for Hero
-        const randomMovie = MOCK_MOVIES[Math.floor(Math.random() * MOCK_MOVIES.length)];
-
+        const randomMovie = MOCK_MOVIES[0];
         return (
           <div className="bg-[#141414] min-h-screen text-white pb-20 overflow-hidden">
             <Navbar onOpenSearch={() => setIsAiModalOpen(true)} />
-            
             <Hero movie={randomMovie} />
-
-            <div className="relative z-30 -mt-16 md:-mt-32 space-y-4 md:space-y-8 pl-4 pb-8">
-              <Row title={Genre.Trending} movies={trending} />
-              <Row title={Genre.Originals} movies={originals} />
-              <Row title={Genre.Action} movies={action} />
-              <Row title={Genre.Comedy} movies={comedy} />
-              <Row title={Genre.SciFi} movies={scifi} />
+            <div className="relative z-30 -mt-16 md:-mt-32 space-y-4 pl-4 pb-8">
+              <Row title={Genre.Trending} movies={ALL_MOVIES.filter(m => m.genre === Genre.Trending)} />
+              <Row title={Genre.Originals} movies={ALL_MOVIES.filter(m => m.genre === Genre.Originals)} />
             </div>
-
-            <AIChatModal 
-              isOpen={isAiModalOpen} 
-              onClose={() => setIsAiModalOpen(false)} 
-            />
-
-            <footer className="px-12 py-8 text-gray-500 text-sm">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                 <ul>
-                   <li className="mb-2 hover:underline cursor-pointer">Audio and Subtitles</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Media Center</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Privacy</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Contact Us</li>
-                 </ul>
-                 <ul>
-                   <li className="mb-2 hover:underline cursor-pointer">Audio Description</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Investor Relations</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Legal Notices</li>
-                 </ul>
-                 <ul>
-                   <li className="mb-2 hover:underline cursor-pointer">Help Center</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Jobs</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Cookie Preferences</li>
-                 </ul>
-                 <ul>
-                   <li className="mb-2 hover:underline cursor-pointer">Gift Cards</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Terms of Use</li>
-                   <li className="mb-2 hover:underline cursor-pointer">Corporate Information</li>
-                 </ul>
-              </div>
-              <div className="max-w-4xl mx-auto mt-4 text-xs">
-                © 2024 Netfly AI Simulation.
-              </div>
+            <AIChatModal isOpen={isAiModalOpen} onClose={() => setIsAiModalOpen(false)} />
+            <footer className="px-12 py-8 text-gray-500 text-xs text-center">
+              © 2024 Netfly AI Simulation. Todos os direitos reservados.
             </footer>
           </div>
         );
@@ -600,8 +342,5 @@
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(<App />);
     </script>
-
-    <!-- Monetag Popunder Ad Script -->
-    <script>(function(s){s.dataset.zone='10264450',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   </body>
 </html>
